@@ -1,5 +1,14 @@
 {
+  "name": "resume-builder-mern",
+  "version": "1.0.0",
+  "description": "Full stack Resume Builder with Render deployment config",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "build": "npm install --prefix client && npm run build --prefix client && npm install --prefix server",
+    "dev": "concurrently \"npm start --prefix server\" \"npm run dev --prefix client\""
+  },
   "dependencies": {
-    "framer-motion": "^12.38.0"
+    "concurrently": "^8.2.2"
   }
 }
