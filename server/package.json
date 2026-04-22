@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "build": "echo 'Building Client...' && cd ../client && npm install && npm run build && echo 'Client Build Complete!'"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -16,6 +17,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.0",
     "multer": "^2.1.1",
+    "nodemailer": "^8.0.5",
     "puppeteer": "^23.4.0"
   },
   "devDependencies": {

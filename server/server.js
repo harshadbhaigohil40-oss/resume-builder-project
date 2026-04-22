@@ -42,12 +42,21 @@ app.use('/api/templates', require('./routes/templateRoutes'));
 // Serve static assets in production
 const path = require('path');
 if (process.env.NODE_ENV === 'production') {
-  // Set static folder
-  app.use(express.static(path.join(__dirname, '../client/dist')));
-
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../client', 'dist', 'index.html'));
-  });
+  const clientBuildPath = path.join(__dirname, '../client/dist');
+  
+  // Check if build exists
+  const fs = require('fs');
+  if (fs.existsSync(clientBuildPath)) {
+    app.use(express.static(clientBuildPath));
+    app.get('*', (req, res) => {
+      res.sendFile(path.resolve(clientBuildPath, 'index.html'));
+    });
+  } else {
+    console.warn('⚠️  Warning: Client build not found at', clientBuildPath);
+    app.get('*', (req, res) => {
+      res.status(500).send('Client build is missing. Please run build script.');
+    });
+  }
 } else {
   // 404 handler for dev
   app.use((req, res) => {

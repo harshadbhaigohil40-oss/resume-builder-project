@@ -8,6 +8,8 @@ import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
 import ResumeBuilderPage from './pages/ResumeBuilderPage';
 import PortfolioPage from './pages/PortfolioPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import VIPIntroAnimation from './components/VIPIntroAnimation';
 import { useAuth } from './context/AuthContext';
 
@@ -75,6 +77,18 @@ function App() {
             <Route path="/signup" element={
               <PublicRoute>
                 <SignupPage />
+              </PublicRoute>
+            } />
+
+            <Route path="/forgot-password" element={
+              <PublicRoute>
+                <ForgotPasswordPage />
+              </PublicRoute>
+            } />
+
+            <Route path="/reset-password/:token" element={
+              <PublicRoute>
+                <ResetPasswordPage />
               </PublicRoute>
             } />
             

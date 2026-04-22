@@ -84,6 +84,14 @@ const LoginPage = () => {
                   className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-surface-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all"
                 />
               </div>
+              <div className="flex justify-end mt-1">
+                <Link
+                  to="/forgot-password"
+                  className="text-xs text-primary-400 hover:text-primary-300 transition-colors"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
             </div>
 
             <motion.button
