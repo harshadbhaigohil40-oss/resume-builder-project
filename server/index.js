@@ -42,7 +42,7 @@ app.use('/api/templates', require('./routes/templateRoutes'));
 // Serve static assets in production
 const path = require('path');
 if (process.env.NODE_ENV === 'production') {
-  const clientBuildPath = path.join(process.cwd(), 'client', 'dist');
+  const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
   
   // Check if build exists
   const fs = require('fs');
