@@ -41,7 +41,7 @@ const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Serve static assets in production
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' || process.env.SERVE_CLIENT === 'true') {
   const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
   
   // Check if build exists
@@ -54,16 +54,24 @@ if (process.env.NODE_ENV === 'production') {
   } else {
     console.warn('⚠️  Warning: Client build not found at', clientBuildPath);
     app.get('*', (req, res) => {
-      res.status(500).send('Client build is missing. Please run build script.');
+      if (req.path.startsWith('/api')) {
+        return res.status(404).json({ success: false, message: 'API route not found' });
+      }
+      res.status(500).send('Client build is missing. Please run "npm run build" in the client directory.');
     });
   }
 } else {
-  // 404 handler for dev
-  app.use((req, res) => {
+  // 404 handler for dev (only for API routes)
+  app.use('/api', (req, res) => {
     res.status(404).json({
       success: false,
-      message: `Route ${req.originalUrl} not found`,
+      message: `API Route ${req.originalUrl} not found`,
     });
+  });
+
+  // Fallback for non-API routes in dev
+  app.get('*', (req, res) => {
+    res.status(404).send(`Route ${req.originalUrl} not found. In development, please use the Vite dev server (usually http://localhost:5173).`);
   });
 }
 

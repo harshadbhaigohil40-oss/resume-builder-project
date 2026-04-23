@@ -25,19 +25,19 @@ const VIPIntroAnimation = () => {
       {/* Decorative Glow Elements */}
       <motion.div 
         animate={{ 
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.6, 0.3] 
+          scale: [1, 1.1, 1],
+          opacity: [0.2, 0.4, 0.2] 
         }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-400 rounded-full blur-[120px] pointer-events-none"
+        className="absolute top-1/4 left-1/4 w-48 h-48 md:w-64 md:h-64 bg-blue-400 rounded-full blur-[60px] md:blur-[120px] pointer-events-none"
       />
       <motion.div 
         animate={{ 
-          scale: [1.2, 1, 1.2],
-          opacity: [0.3, 0.5, 0.3] 
+          scale: [1.1, 1, 1.1],
+          opacity: [0.2, 0.3, 0.2] 
         }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500 rounded-full blur-[140px] pointer-events-none"
+        className="absolute bottom-1/4 right-1/4 w-60 h-60 md:w-80 md:h-80 bg-purple-500 rounded-full blur-[70px] md:blur-[140px] pointer-events-none"
       />
 
       {/* Main Logo Content */}
@@ -45,9 +45,9 @@ const VIPIntroAnimation = () => {
         {/* VIP Logo Container */}
         <motion.div
           initial={{ scale: 0, rotate: -10 }}
-          animate={{ scale: [0, 1.3, 1], rotate: [-10, 0] }}
+          animate={{ scale: [0, 1.15, 1], rotate: [-10, 0] }}
           transition={{ 
-            duration: 1.5, 
+            duration: 1.2, 
             times: [0, 0.7, 1],
             ease: "backOut" 
           }}
@@ -103,8 +103,8 @@ const VIPIntroAnimation = () => {
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 1 }}
               transition={{ 
-                pathLength: { duration: 1.8, delay: 0.5, ease: "easeInOut" },
-                opacity: { duration: 0.2, delay: 0.5 }
+                pathLength: { duration: 1.5, delay: 0.3, ease: "easeInOut" },
+                opacity: { duration: 0.2, delay: 0.3 }
               }}
             />
             {/* Tracer Dot for R */}
@@ -147,8 +147,8 @@ const VIPIntroAnimation = () => {
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 0.9 }}
               transition={{ 
-                pathLength: { duration: 1.8, delay: 0.8, ease: "easeInOut" },
-                opacity: { duration: 0.2, delay: 0.8 }
+                pathLength: { duration: 1.5, delay: 0.5, ease: "easeInOut" },
+                opacity: { duration: 0.2, delay: 0.5 }
               }}
             />
             {/* Tracer Dot for B */}
@@ -188,15 +188,15 @@ const VIPIntroAnimation = () => {
 
         {/* VIP Text Animation */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, duration: 1, ease: "easeOut" }}
-          className="text-center"
+          transition={{ delay: 1, duration: 0.8, ease: "easeOut" }}
+          className="text-center px-4"
         >
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-3 tracking-tight drop-shadow-lg">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-2 tracking-tight drop-shadow-lg">
             Resume Builder
           </h1>
-          <p className="text-white/70 text-xl md:text-2xl font-light tracking-wide uppercase">
+          <p className="text-white/70 text-lg md:text-2xl font-light tracking-wide uppercase">
             Build Your Professional Resume
           </p>
         </motion.div>
@@ -207,7 +207,7 @@ const VIPIntroAnimation = () => {
         <motion.div 
           initial={{ scaleX: 0, originX: 0 }}
           animate={{ scaleX: 1 }}
-          transition={{ duration: 5, ease: "easeInOut" }}
+          transition={{ duration: 4, ease: "easeInOut" }}
           className="h-full bg-gradient-to-r from-blue-400 to-purple-400"
         />
       </div>
