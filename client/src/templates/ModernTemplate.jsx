@@ -6,7 +6,7 @@ const ModernTemplate = ({ data }) => {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif", color: '#1e293b', fontSize: '13px', lineHeight: '1.6', display: 'flex', minHeight: '100%' }}>
       {/* Left Sidebar */}
-      <div style={{ width: '35%', background: 'linear-gradient(180deg, #6C63FF 0%, #4F46E5 100%)', color: 'white', padding: '36px 24px' }}>
+      <div style={{ width: '35%', background: 'var(--resume-color, linear-gradient(180deg, #6C63FF 0%, #4F46E5 100%))', color: 'white', padding: '36px 24px' }}>
         {/* Avatar placeholder */}
         <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', fontWeight: '700' }}>
           {(personalInfo.fullName || 'U')[0]}
@@ -64,14 +64,14 @@ const ModernTemplate = ({ data }) => {
       <div style={{ width: '65%', padding: '36px 32px' }}>
         {/* Experience */}
         {experience.length > 0 && (
-          <MainSection title="Work Experience" color="#6C63FF">
+          <MainSection title="Work Experience" color="var(--resume-color, #6C63FF)">
             {experience.map((exp, i) => (
-              <div key={i} style={{ marginBottom: '18px', paddingLeft: '16px', borderLeft: '3px solid #6C63FF' }}>
+              <div key={i} style={{ marginBottom: '18px', paddingLeft: '16px', borderLeft: '3px solid var(--resume-color, #6C63FF)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap' }}>
                   <h3 style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b', margin: 0 }}>{exp.position || 'Position'}</h3>
                   <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: '500' }}>{exp.startDate}{exp.startDate && (exp.endDate || exp.current) ? ' — ' : ''}{exp.current ? 'Present' : exp.endDate}</span>
                 </div>
-                <p style={{ fontSize: '13px', color: '#6C63FF', fontWeight: '600', margin: '2px 0 6px 0' }}>{exp.company}</p>
+                <p style={{ fontSize: '13px', color: 'var(--resume-color, #6C63FF)', fontWeight: '600', margin: '2px 0 6px 0' }}>{exp.company}</p>
                 {exp.description && <p style={{ color: '#475569', margin: 0, fontSize: '12px' }}>{exp.description}</p>}
               </div>
             ))}
@@ -80,7 +80,7 @@ const ModernTemplate = ({ data }) => {
 
         {/* Education */}
         {education.length > 0 && (
-          <MainSection title="Education" color="#6C63FF">
+          <MainSection title="Education" color="var(--resume-color, #6C63FF)">
             {education.map((edu, i) => (
               <div key={i} style={{ marginBottom: '14px', paddingLeft: '16px', borderLeft: '3px solid #e2e8f0' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap' }}>
@@ -89,7 +89,7 @@ const ModernTemplate = ({ data }) => {
                   </h3>
                   <span style={{ fontSize: '11px', color: '#94a3b8' }}>{edu.startDate}{edu.startDate && edu.endDate ? ' — ' : ''}{edu.endDate}</span>
                 </div>
-                <p style={{ fontSize: '13px', color: '#6C63FF', fontWeight: '500', margin: '2px 0' }}>{edu.institution}</p>
+                <p style={{ fontSize: '13px', color: 'var(--resume-color, #6C63FF)', fontWeight: '500', margin: '2px 0' }}>{edu.institution}</p>
                 {edu.description && <p style={{ color: '#475569', margin: 0, fontSize: '12px' }}>{edu.description}</p>}
               </div>
             ))}
@@ -98,7 +98,7 @@ const ModernTemplate = ({ data }) => {
 
         {/* Projects */}
         {projects.length > 0 && (
-          <MainSection title="Projects" color="#6C63FF">
+          <MainSection title="Projects" color="var(--resume-color, #6C63FF)">
             {projects.map((proj, i) => (
               <div key={i} style={{ marginBottom: '14px' }}>
                 <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#1e293b', margin: '0 0 2px 0' }}>
@@ -108,7 +108,7 @@ const ModernTemplate = ({ data }) => {
                 {proj.technologies?.length > 0 && (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                     {proj.technologies.map((tech, j) => (
-                      <span key={j} style={{ padding: '2px 8px', backgroundColor: '#f1f5f9', borderRadius: '4px', fontSize: '10px', color: '#6C63FF', fontWeight: '600' }}>
+                      <span key={j} style={{ padding: '2px 8px', backgroundColor: '#f1f5f9', borderRadius: '4px', fontSize: '10px', color: 'var(--resume-color, #6C63FF)', fontWeight: '600' }}>
                         {tech}
                       </span>
                     ))}

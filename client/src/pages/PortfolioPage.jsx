@@ -90,7 +90,7 @@ const PortfolioPage = () => {
         >
           <div className="flex items-center gap-4">
             {user.avatar ? (
-              <img src={user.avatar} alt={user.name} className="w-16 h-16 rounded-full object-cover" />
+              <img src={`http://localhost:5000${user.avatar}`} alt={user.name} className="w-16 h-16 rounded-full object-cover" />
             ) : (
               <div className="w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 text-2xl font-bold">
                 {user.name.charAt(0)}

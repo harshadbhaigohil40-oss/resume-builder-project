@@ -50,6 +50,9 @@ exports.signup = async (req, res, next) => {
         name: user.name,
         email: user.email,
         avatar: user.avatar,
+        github: user.github,
+        linkedin: user.linkedin,
+        website: user.website,
         isPremium: user.isPremium,
       },
     });
@@ -103,6 +106,9 @@ exports.login = async (req, res, next) => {
         name: user.name,
         email: user.email,
         avatar: user.avatar,
+        github: user.github,
+        linkedin: user.linkedin,
+        website: user.website,
         isPremium: user.isPremium,
       },
     });
@@ -124,6 +130,9 @@ exports.getMe = async (req, res, next) => {
         name: user.name,
         email: user.email,
         avatar: user.avatar,
+        github: user.github,
+        linkedin: user.linkedin,
+        website: user.website,
         isPremium: user.isPremium,
         createdAt: user.createdAt,
       },
@@ -232,6 +241,54 @@ exports.resetPassword = async (req, res, next) => {
       success: true,
       token,
       message: 'Password reset successful',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Update user profile
+// @route   PUT /api/auth/profile
+// @access  Private
+exports.updateProfile = async (req, res, next) => {
+  try {
+    const { name, github, linkedin, website } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    // Update text fields
+    if (name) user.name = name;
+    if (github !== undefined) user.github = github;
+    if (linkedin !== undefined) user.linkedin = linkedin;
+    if (website !== undefined) user.website = website;
+
+    // Handle avatar upload
+    if (req.file) {
+      const avatarPath = `/uploads/avatars/${req.file.filename}`;
+      user.avatar = avatarPath;
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+        github: user.github,
+        linkedin: user.linkedin,
+        website: user.website,
+        isPremium: user.isPremium,
+      },
     });
   } catch (error) {
     next(error);

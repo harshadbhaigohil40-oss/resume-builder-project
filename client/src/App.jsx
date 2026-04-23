@@ -10,6 +10,7 @@ import ResumeBuilderPage from './pages/ResumeBuilderPage';
 import PortfolioPage from './pages/PortfolioPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import ProfilePage from './pages/ProfilePage';
 import VIPIntroAnimation from './components/VIPIntroAnimation';
 import { useAuth } from './context/AuthContext';
 
@@ -107,6 +108,12 @@ function App() {
             <Route path="/builder/:id" element={
               <ProtectedRoute>
                 <ResumeBuilderPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             } />
 

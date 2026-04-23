@@ -51,12 +51,20 @@ const Navbar = () => {
                   Templates
                 </NavLink>
                 <div className="w-px h-6 bg-surface-200 dark:bg-surface-700 mx-2" />
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-100 dark:bg-surface-800">
-                  <FiUser className="w-4 h-4 text-primary-500" />
+                <Link to="/profile" className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors">
+                  {user?.avatar ? (
+                    <img 
+                      src={`http://localhost:5000${user.avatar}`} 
+                      alt={user.name} 
+                      className="w-6 h-6 rounded-md object-cover"
+                    />
+                  ) : (
+                    <FiUser className="w-4 h-4" style={{ color: 'var(--resume-color, #3b82f6)' }} />
+                  )}
                   <span className="text-sm font-medium text-surface-700 dark:text-surface-200">
                     {user?.name}
                   </span>
-                </div>
+                </Link>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -128,6 +136,7 @@ const Navbar = () => {
               <>
                 <MobileLink to="/dashboard" onClick={() => setMobileOpen(false)}>Dashboard</MobileLink>
                 <MobileLink to="/templates" onClick={() => setMobileOpen(false)}>Templates</MobileLink>
+                <MobileLink to="/profile" onClick={() => setMobileOpen(false)}>Profile</MobileLink>
                 <button
                   onClick={handleLogout}
                   className="w-full text-left px-4 py-2.5 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 font-medium"

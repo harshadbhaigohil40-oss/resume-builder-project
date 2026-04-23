@@ -36,8 +36,11 @@ app.use('/api/resumes', require('./routes/resumeRoutes'));
 app.use('/api/portfolio', require('./routes/portfolioRoutes'));
 app.use('/api/templates', require('./routes/templateRoutes'));
 
-// Serve static assets in production
+// Serve static assets
 const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
   const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
   

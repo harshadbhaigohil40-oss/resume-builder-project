@@ -6,11 +6,11 @@ const ClassicTemplate = ({ data }) => {
   return (
     <div style={{ fontFamily: "'Inter', 'Georgia', serif", color: '#1a1a1a', padding: '40px 48px', fontSize: '13px', lineHeight: '1.6' }}>
       {/* Header */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderBottom: '2px solid #2c3e50', paddingBottom: '20px', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderBottom: '2px solid var(--resume-color, #2c3e50)', paddingBottom: '20px', marginBottom: '24px' }}>
         {personalInfo.photo && (
           <img src={personalInfo.photo} alt="Profile" style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', marginBottom: '12px', border: '3px solid #ecf0f1' }} />
         )}
-        <h1 style={{ fontSize: '28px', fontWeight: '700', color: '#2c3e50', margin: '0 0 6px 0', letterSpacing: '1px', textAlign: 'center' }}>
+        <h1 style={{ fontSize: '28px', fontWeight: '700', color: 'var(--resume-color, #2c3e50)', margin: '0 0 6px 0', letterSpacing: '1px', textAlign: 'center' }}>
           {personalInfo.fullName || 'Your Full Name'}
         </h1>
         <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px', fontSize: '12px', color: '#555' }}>
@@ -117,7 +117,7 @@ const ClassicTemplate = ({ data }) => {
 
 const Section = ({ title, children }) => (
   <div style={{ marginBottom: '20px' }}>
-    <h2 style={{ fontSize: '16px', fontWeight: '700', color: '#2c3e50', textTransform: 'uppercase', letterSpacing: '1.5px', borderBottom: '1px solid #bdc3c7', paddingBottom: '6px', marginBottom: '12px' }}>
+    <h2 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--resume-color, #2c3e50)', textTransform: 'uppercase', letterSpacing: '1.5px', borderBottom: '1px solid #bdc3c7', paddingBottom: '6px', marginBottom: '12px' }}>
       {title}
     </h2>
     {children}

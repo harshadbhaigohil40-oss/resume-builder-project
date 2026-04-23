@@ -14,7 +14,7 @@ export const ThemeProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : true; // Default to dark mode
   });
   const [resumeColor, setResumeColor] = useState(() => {
-    return localStorage.getItem('resumeColor') || '#3b82f6';
+    return localStorage.getItem('resumeColor') || '#6C63FF';
   });
 
   useEffect(() => {
@@ -28,6 +28,7 @@ export const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem('resumeColor', resumeColor);
+    document.documentElement.style.setProperty('--resume-color', resumeColor);
   }, [resumeColor]);
 
   const toggleDarkMode = () => setDarkMode((prev) => !prev);

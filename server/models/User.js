@@ -28,6 +28,18 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    github: {
+      type: String,
+      default: '',
+    },
+    linkedin: {
+      type: String,
+      default: '',
+    },
+    website: {
+      type: String,
+      default: '',
+    },
     isPremium: {
       type: Boolean,
       default: false,
