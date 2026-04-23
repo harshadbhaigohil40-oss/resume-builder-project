@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         try {
           api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-          const res = await api.get('/auth/me');
+          const res = await api.get('/me');
           setUser(res.data.user);
         } catch (err) {
           console.error('Failed to load user:', err);
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
+    const res = await api.post('/login', { email, password });
     const { token: newToken, user: userData } = res.data;
     localStorage.setItem('token', newToken);
     api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (name, email, password) => {
-    const res = await api.post('/auth/signup', { name, email, password });
+    const res = await api.post('/signup', { name, email, password });
     const { token: newToken, user: userData } = res.data;
     localStorage.setItem('token', newToken);
     api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;

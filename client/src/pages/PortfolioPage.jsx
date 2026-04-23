@@ -18,7 +18,7 @@ const PortfolioPage = () => {
   useEffect(() => {
     const fetchPortfolio = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/portfolio/${username}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/portfolio/${username}`);
         setPortfolio(res.data.data);
         
         // If portfolio has a custom theme color, apply it
@@ -90,7 +90,7 @@ const PortfolioPage = () => {
         >
           <div className="flex items-center gap-4">
             {user.avatar ? (
-              <img src={`http://localhost:5000${user.avatar}`} alt={user.name} className="w-16 h-16 rounded-full object-cover" />
+              <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${user.avatar}`} alt={user.name} className="w-16 h-16 rounded-full object-cover" />
             ) : (
               <div className="w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 text-2xl font-bold">
                 {user.name.charAt(0)}

@@ -54,7 +54,7 @@ const Navbar = () => {
                 <Link to="/profile" className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors">
                   {user?.avatar ? (
                     <img 
-                      src={`http://localhost:5000${user.avatar}`} 
+                      src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${user.avatar}`} 
                       alt={user.name} 
                       className="w-6 h-6 rounded-md object-cover"
                     />

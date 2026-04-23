@@ -8,7 +8,7 @@ import toast, { Toaster } from 'react-hot-toast';
 const ProfilePage = () => {
   const { user, setUser } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [preview, setPreview] = useState(user?.avatar ? `http://localhost:5000${user.avatar}` : null);
+  const [preview, setPreview] = useState(user?.avatar ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${user.avatar}` : null);
   const [formData, setFormData] = useState({
     name: user?.name || '',
     github: user?.github || '',
@@ -51,7 +51,7 @@ const ProfilePage = () => {
         data.append('avatar', fileInputRef.current.files[0]);
       }
 
-      const res = await api.put('/auth/profile', data, {
+      const res = await api.put('/profile', data, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
