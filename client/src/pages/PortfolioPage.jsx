@@ -5,8 +5,8 @@ import axios from 'axios';
 import { useTheme } from '../context/ThemeContext';
 import ClassicTemplate from '../templates/ClassicTemplate';
 import MinimalTemplate from '../templates/MinimalTemplate';
-// Add other templates as needed
-// import ModernTemplate from '../templates/ModernTemplate';
+import ModernTemplate from '../templates/ModernTemplate';
+import StylishTemplate from '../templates/StylishTemplate';
 
 const PortfolioPage = () => {
   const { username } = useParams();
@@ -68,13 +68,16 @@ const PortfolioPage = () => {
 
   // Render the appropriate template
   const renderTemplate = () => {
-    const props = { resumeData: resume };
+    const props = { data: resume };
     switch (resume.template) {
       case 'classic':
         return <ClassicTemplate {...props} />;
       case 'minimal':
         return <MinimalTemplate {...props} />;
-      // case 'modern': return <ModernTemplate {...props} />;
+      case 'modern':
+        return <ModernTemplate {...props} />;
+      case 'stylish':
+        return <StylishTemplate {...props} />;
       default:
         return <ClassicTemplate {...props} />;
     }

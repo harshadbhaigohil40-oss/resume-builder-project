@@ -28,6 +28,7 @@ const DashboardCard = ({ resume, onDelete, isNew = false }) => {
     classic: 'from-blue-500 to-indigo-600',
     modern: 'from-purple-500 to-pink-600',
     minimal: 'from-emerald-500 to-teal-600',
+    stylish: 'from-indigo-600 to-purple-600',
   };
 
   const formatDate = (date) => {

@@ -28,8 +28,8 @@ exports.getTemplates = (req, res, next) => {
         isPremium: false,
       },
       {
-        id: 'executive',
-        name: 'Executive Premium',
+        id: 'stylish',
+        name: 'Executive Stylish',
         description: 'Sophisticated layout designed for senior level positions.',
         thumbnail: '/templates/executive.png',
         isPremium: true,

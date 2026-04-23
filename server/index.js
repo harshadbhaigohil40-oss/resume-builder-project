@@ -1,11 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
 // Load environment variables
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 // Connect to MongoDB
 connectDB();
@@ -37,7 +38,6 @@ app.use('/api/portfolio', require('./routes/portfolioRoutes'));
 app.use('/api/templates', require('./routes/templateRoutes'));
 
 // Serve static assets
-const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Serve static assets in production

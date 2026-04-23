@@ -1,7 +1,7 @@
 import React from 'react';
 
-const StylishTemplate = ({ data }) => {
-  const { personalInfo, experience, education, skills, projects } = data;
+const StylishTemplate = ({ data = {} }) => {
+  const { personalInfo = {}, experience = [], education = [], skills = [], projects = [] } = data;
 
   return (
     <div className="flex flex-col h-full bg-slate-50 text-slate-800 font-sans">

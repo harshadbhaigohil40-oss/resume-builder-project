@@ -43,7 +43,7 @@ const ResumeBuilderPage = () => {
           setFormData(data.resume);
           setResumeId(id);
         } catch (err) {
-          toast.error('Failed to load resume');
+          toast.error(err.response?.data?.message || 'Failed to load resume');
           navigate('/dashboard');
         } finally { setLoading(false); }
       })();
@@ -77,7 +77,7 @@ const ResumeBuilderPage = () => {
         navigate(`/builder/${data.resume._id}`, { replace: true });
       }
     } catch (err) {
-      toast.error('Failed to save');
+      toast.error(err.response?.data?.message || 'Failed to save');
     } finally { setSaving(false); }
   };
 

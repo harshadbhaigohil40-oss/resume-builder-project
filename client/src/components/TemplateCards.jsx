@@ -20,10 +20,10 @@ const TEMPLATES = [
     image: 'https://placehold.co/400x500/e2e8f0/475569?text=Minimal+Template'
   },
   {
-    id: 'executive',
-    name: 'Executive Premium',
+    id: 'stylish',
+    name: 'Executive Stylish',
     description: 'Sophisticated layout designed for senior positions.',
-    image: 'https://placehold.co/400x500/e2e8f0/475569?text=Executive+Template'
+    image: 'https://placehold.co/400x500/e2e8f0/475569?text=Stylish+Template'
   }
 ];
 
