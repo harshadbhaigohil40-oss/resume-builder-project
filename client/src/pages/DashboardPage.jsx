@@ -84,7 +84,7 @@ const DashboardPage = () => {
             <DashboardCard isNew />
             <AnimatePresence>
               {resumes.map((resume) => (
-                <DashboardCard key={resume._id} resume={resume} onDelete={handleDelete} />
+                <DashboardCard key={resume._id} resume={resume} onDelete={handleDelete} onUpdate={fetchResumes} />
               ))}
             </AnimatePresence>
           </motion.div>

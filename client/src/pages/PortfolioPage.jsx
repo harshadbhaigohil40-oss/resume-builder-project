@@ -7,6 +7,7 @@ import ClassicTemplate from '../templates/ClassicTemplate';
 import MinimalTemplate from '../templates/MinimalTemplate';
 import ModernTemplate from '../templates/ModernTemplate';
 import StylishTemplate from '../templates/StylishTemplate';
+import AnimatedTemplate from '../templates/AnimatedTemplate';
 
 const PortfolioPage = () => {
   const { username } = useParams();
@@ -78,6 +79,8 @@ const PortfolioPage = () => {
         return <ModernTemplate {...props} />;
       case 'stylish':
         return <StylishTemplate {...props} />;
+      case 'animated':
+        return <AnimatedTemplate {...props} />;
       default:
         return <ClassicTemplate {...props} />;
     }

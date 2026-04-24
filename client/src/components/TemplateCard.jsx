@@ -21,6 +21,12 @@ const TemplateCard = ({ template, isSelected, onSelect }) => {
       accent: 'text-emerald-600 dark:text-emerald-400',
       description: 'Clean and minimal design that lets content shine',
     },
+    animated: {
+      gradient: 'from-slate-800 to-slate-900',
+      bg: 'bg-slate-800 dark:bg-slate-900',
+      accent: 'text-cyan-400 dark:text-cyan-400',
+      description: 'Interactive 3D animated dark theme template.',
+    },
   };
 
   const style = templateStyles[template.id] || templateStyles.classic;

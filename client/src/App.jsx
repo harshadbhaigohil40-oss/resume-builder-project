@@ -11,6 +11,7 @@ import PortfolioPage from './pages/PortfolioPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ProfilePage from './pages/ProfilePage';
+import TemplatesPage from './pages/TemplatesPage';
 import VIPIntroAnimation from './components/VIPIntroAnimation';
 import { useAuth } from './context/AuthContext';
 
@@ -68,6 +69,7 @@ function App() {
         <main>
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/templates" element={<TemplatesPage />} />
             
             <Route path="/login" element={
               <PublicRoute>
