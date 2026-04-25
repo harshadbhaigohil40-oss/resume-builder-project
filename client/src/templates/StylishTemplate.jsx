@@ -1,11 +1,11 @@
 import React from 'react';
 
 const StylishTemplate = ({ data = {} }) => {
-  const { 
-    personalInfo = {}, 
-    experience = [], 
-    education = [], 
-    skills = [], 
+  const {
+    personalInfo = {},
+    experience = [],
+    education = [],
+    skills = [],
     projects = [],
     certifications = [],
     volunteer = [],
@@ -26,29 +26,33 @@ const StylishTemplate = ({ data = {} }) => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 text-slate-800" style={globalStyle}>
-      {/* Header Section */}
-      <header className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-8 relative overflow-hidden" style={{ padding: `${margin + 32}px 32px` }}>
-        <div className="relative z-10 flex items-center gap-6">
-          {personalInfo?.photo && (
-            <img src={personalInfo.photo} alt="Avatar" className="w-20 h-20 rounded-2xl object-cover border-4 border-white/20 shadow-xl" />
-          )}
-          <div>
-            <h1 className="font-black uppercase tracking-wider mb-2" style={{ fontSize: `${fontSize + 19}px` }}>
-              {personalInfo?.fullName || 'YOUR NAME'}
-            </h1>
-            <p className="text-indigo-100 font-medium tracking-widest uppercase mb-4" style={{ fontSize: `${fontSize - 1}px` }}>
-              {experience?.[0]?.position || 'Professional Title'}
-            </p>
-            <div className="flex flex-wrap gap-4 text-xs font-light opacity-90">
-              {personalInfo?.email && <span className="flex items-center gap-1">✉ {personalInfo.email}</span>}
-              {personalInfo?.phone && <span className="flex items-center gap-1">☏ {personalInfo.phone}</span>}
-              {personalInfo?.address && <span className="flex items-center gap-1">📍 {personalInfo.address}</span>}
+    <div className="flex flex-col h-full bg-white text-slate-900 selection:bg-amber-200" style={globalStyle}>
+      {/* Header Section - High Level Executive Design */}
+      <header className="bg-slate-900 text-white p-12 relative overflow-hidden" style={{ padding: `${margin + 48}px 48px` }}>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+          <div className="flex items-center gap-8">
+            {personalInfo?.photo && (
+              <img src={personalInfo.photo} alt="Avatar" className="w-24 h-24 rounded-full object-cover border-4 border-white/10 shadow-2xl grayscale hover:grayscale-0 transition-all duration-500" />
+            )}
+            <div>
+              <h1 className="font-display font-black uppercase tracking-tighter mb-1 leading-none" style={{ fontSize: `${fontSize + 32}px` }}>
+                {personalInfo?.fullName || 'YOUR NAME'}
+              </h1>
+              <p className="font-bold tracking-[0.3em] uppercase mb-6" style={{ fontSize: `${fontSize}px`, color: 'var(--resume-color, #f59e0b)' }}>
+                {experience?.[0]?.position || 'Professional Title'}
+              </p>
+              <div className="flex flex-wrap gap-6 text-[11px] font-medium opacity-60 tracking-widest uppercase">
+                {personalInfo?.email && <span className="flex items-center gap-2"><span style={{ color: 'var(--resume-color, #f59e0b)' }}>E</span> {personalInfo.email}</span>}
+                {personalInfo?.phone && <span className="flex items-center gap-2"><span style={{ color: 'var(--resume-color, #f59e0b)' }}>T</span> {personalInfo.phone}</span>}
+                {personalInfo?.address && <span className="flex items-center gap-2"><span style={{ color: 'var(--resume-color, #f59e0b)' }}>L</span> {personalInfo.address}</span>}
+              </div>
             </div>
           </div>
+          {/* Decorative Monogram */}
+          <div className="hidden md:block opacity-10 font-display font-black text-9xl absolute right-12 top-1/2 -translate-y-1/2 select-none">
+            {personalInfo?.fullName?.charAt(0) || 'R'}
+          </div>
         </div>
-        {/* Decorative Element */}
-        <div className="absolute -right-20 -top-20 w-64 h-64 bg-white opacity-5 rounded-full blur-2xl"></div>
       </header>
 
       {/* Main Content (2 Columns) */}
@@ -58,7 +62,7 @@ const StylishTemplate = ({ data = {} }) => {
           {/* Summary */}
           {personalInfo?.summary && (
             <section className="mb-8">
-              <h2 className="font-bold uppercase tracking-widest text-indigo-600 mb-3 border-b-2 border-indigo-100 pb-1" style={{ fontSize: `${fontSize + 1}px` }}>
+              <h2 className="font-bold uppercase tracking-widest mb-3 border-b-2 pb-1" style={{ fontSize: `${fontSize + 1}px`, color: 'var(--resume-color, #6366f1)', borderColor: 'var(--resume-color, #6366f1)22' }}>
                 About Me
               </h2>
               <p className="leading-relaxed text-slate-600" style={{ fontSize: `${fontSize - 1}px` }}>
@@ -70,7 +74,7 @@ const StylishTemplate = ({ data = {} }) => {
           {/* Languages */}
           {languages.length > 0 && (
             <section className="mb-8">
-              <h2 className="font-bold uppercase tracking-widest text-indigo-600 mb-3 border-b-2 border-indigo-100 pb-1" style={{ fontSize: `${fontSize + 1}px` }}>
+              <h2 className="font-bold uppercase tracking-widest mb-3 border-b-2 pb-1" style={{ fontSize: `${fontSize + 1}px`, color: 'var(--resume-color, #6366f1)', borderColor: 'var(--resume-color, #6366f1)22' }}>
                 Languages
               </h2>
               <div className="flex flex-col gap-2">
@@ -87,7 +91,7 @@ const StylishTemplate = ({ data = {} }) => {
           {/* Skills */}
           {skills && skills.length > 0 && (
             <section className="mb-8">
-              <h2 className="font-bold uppercase tracking-widest text-indigo-600 mb-3 border-b-2 border-indigo-100 pb-1" style={{ fontSize: `${fontSize + 1}px` }}>
+              <h2 className="font-bold uppercase tracking-widest mb-3 border-b-2 pb-1" style={{ fontSize: `${fontSize + 1}px`, color: 'var(--resume-color, #6366f1)', borderColor: 'var(--resume-color, #6366f1)22' }}>
                 Expertise
               </h2>
               <div className="flex flex-wrap gap-2">
@@ -107,7 +111,7 @@ const StylishTemplate = ({ data = {} }) => {
           {/* Education */}
           {education && education.length > 0 && (
             <section>
-              <h2 className="font-bold uppercase tracking-widest text-indigo-600 mb-3 border-b-2 border-indigo-100 pb-1" style={{ fontSize: `${fontSize + 1}px` }}>
+              <h2 className="font-bold uppercase tracking-widest mb-3 border-b-2 pb-1" style={{ fontSize: `${fontSize + 1}px`, color: 'var(--resume-color, #6366f1)', borderColor: 'var(--resume-color, #6366f1)22' }}>
                 Education
               </h2>
               <div className="flex flex-col gap-4">
@@ -129,21 +133,21 @@ const StylishTemplate = ({ data = {} }) => {
           {/* Experience */}
           {experience && experience.length > 0 && (
             <section className="mb-8">
-              <h2 className="font-bold uppercase tracking-widest text-indigo-600 mb-4 flex items-center gap-2" style={{ fontSize: `${fontSize + 1}px` }}>
-                <span className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs">💼</span>
+              <h2 className="font-bold uppercase tracking-widest mb-4 flex items-center gap-2" style={{ fontSize: `${fontSize + 1}px`, color: 'var(--resume-color, #6366f1)' }}>
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs" style={{ backgroundColor: 'var(--resume-color, #6366f1)22', color: 'var(--resume-color, #6366f1)' }}>💼</span>
                 Experience
               </h2>
               <div className="flex flex-col gap-6 relative border-l-2 border-slate-100 ml-3 pl-4">
                 {experience.map((exp, index) => (
                   <div key={index} className="relative">
-                    <div className="absolute -left-[21px] top-1.5 w-2.5 h-2.5 rounded-full bg-indigo-400 ring-4 ring-white"></div>
+                    <div className="absolute -left-[21px] top-1.5 w-2.5 h-2.5 rounded-full ring-4 ring-white" style={{ backgroundColor: 'var(--resume-color, #6366f1)' }}></div>
                     <div className="flex justify-between items-baseline mb-1">
                       <h3 className="font-bold text-slate-800" style={{ fontSize: `${fontSize + 1}px` }}>{exp.position}</h3>
-                      <span className="font-semibold text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-full" style={{ fontSize: `${fontSize - 3}px` }}>
+                      <span className="font-semibold px-2 py-0.5 rounded-full" style={{ fontSize: `${fontSize - 3}px`, backgroundColor: 'var(--resume-color, #6366f1)22', color: 'var(--resume-color, #6366f1)' }}>
                         {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
                       </span>
                     </div>
-                    <p className="font-medium text-purple-600 mb-2" style={{ fontSize: `${fontSize - 1}px` }}>{exp.company}</p>
+                    <p className="font-medium mb-2" style={{ fontSize: `${fontSize - 1}px`, color: 'var(--resume-color, #6366f1)' }}>{exp.company}</p>
                     <p className="text-slate-600 leading-relaxed" style={{ fontSize: `${fontSize - 1}px` }}>
                       {exp.description}
                     </p>
@@ -158,8 +162,8 @@ const StylishTemplate = ({ data = {} }) => {
             <section className="mb-8 grid grid-cols-1 gap-6">
               {awards.length > 0 && (
                 <div>
-                  <h2 className="font-bold uppercase tracking-widest text-indigo-600 mb-4 flex items-center gap-2" style={{ fontSize: `${fontSize + 1}px` }}>
-                    <span className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs">🏆</span>
+                  <h2 className="font-bold uppercase tracking-widest mb-4 flex items-center gap-2" style={{ fontSize: `${fontSize + 1}px`, color: 'var(--resume-color, #6366f1)' }}>
+                    <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs" style={{ backgroundColor: 'var(--resume-color, #6366f1)22', color: 'var(--resume-color, #6366f1)' }}>🏆</span>
                     Awards
                   </h2>
                   <div className="space-y-4">
@@ -178,8 +182,8 @@ const StylishTemplate = ({ data = {} }) => {
           {/* Custom Sections */}
           {customSections.map((section, i) => (
             <section key={i} className="mb-8">
-              <h2 className="font-bold uppercase tracking-widest text-indigo-600 mb-4 flex items-center gap-2" style={{ fontSize: `${fontSize + 1}px` }}>
-                <span className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs">◈</span>
+              <h2 className="font-bold uppercase tracking-widest mb-4 flex items-center gap-2" style={{ fontSize: `${fontSize + 1}px`, color: 'var(--resume-color, #6366f1)' }}>
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs" style={{ backgroundColor: 'var(--resume-color, #6366f1)22', color: 'var(--resume-color, #6366f1)' }}>◈</span>
                 {section.title || 'Custom'}
               </h2>
               <div className="space-y-4">

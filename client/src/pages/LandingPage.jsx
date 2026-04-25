@@ -2,120 +2,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { FiFileText, FiLayout, FiDownload, FiZap, FiArrowRight, FiStar, FiShield } from 'react-icons/fi';
+import { FiFileText, FiLayout, FiDownload, FiZap, FiArrowRight, FiStar, FiShield, FiMail } from 'react-icons/fi';
 
-const MirrorFluidBackground = () => {
-  const canvasRef = useRef(null);
-  const mouse = useRef({ x: -1000, y: -1000 });
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    let animationFrameId;
-
-    const dots = [];
-    const spacing = 40;
-    const radius = 1.5;
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initDots();
-    };
-
-    const initDots = () => {
-      dots.length = 0;
-      for (let x = spacing / 2; x < canvas.width; x += spacing) {
-        for (let y = spacing / 2; y < canvas.height; y += spacing) {
-          dots.push({ x, y, baseX: x, baseY: y });
-        }
-      }
-    };
-
-    const handleMouseMove = (e) => {
-      mouse.current = { x: e.clientX, y: e.clientY };
-    };
-
-    const render = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      const { x: mx, y: my } = mouse.current;
-      const mirrorX = canvas.width - mx; // Mirror X position
-
-      dots.forEach(dot => {
-        // Distance from actual mouse
-        const dx1 = mx - dot.baseX;
-        const dy1 = my - dot.baseY;
-        const dist1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
-        
-        // Distance from mirrored mouse
-        const dx2 = mirrorX - dot.baseX;
-        const dy2 = my - dot.baseY;
-        const dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-
-        const maxDist = 150;
-        let force = 0;
-        let targetX = dot.baseX;
-        let targetY = dot.baseY;
-
-        if (dist1 < maxDist) {
-          force = (maxDist - dist1) / maxDist;
-          targetX -= (dx1 / dist1) * force * 40;
-          targetY -= (dy1 / dist1) * force * 40;
-        }
-
-        if (dist2 < maxDist) {
-          force = (maxDist - dist2) / maxDist;
-          targetX -= (dx2 / dist2) * force * 40;
-          targetY -= (dy2 / dist2) * force * 40;
-        }
-
-        // Smooth transition
-        dot.x += (targetX - dot.x) * 0.1;
-        dot.y += (targetY - dot.y) * 0.1;
-
-        // Draw dot
-        const opacity = Math.max(0.1, force * 0.8);
-        ctx.fillStyle = `rgba(99, 102, 241, ${opacity})`;
-        ctx.beginPath();
-        ctx.arc(dot.x, dot.y, radius + (force * 2), 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Draw connection lines if close
-        if (force > 0.4) {
-          ctx.strokeStyle = `rgba(99, 102, 241, ${force * 0.2})`;
-          ctx.lineWidth = 0.5;
-          ctx.beginPath();
-          ctx.moveTo(dot.x, dot.y);
-          ctx.lineTo(dot.baseX, dot.baseY);
-          ctx.stroke();
-        }
-      });
-
-      animationFrameId = requestAnimationFrame(render);
-    };
-
-    window.addEventListener('resize', resize);
-    window.addEventListener('mousemove', handleMouseMove);
-    resize();
-    render();
-
-    return () => {
-      window.removeEventListener('resize', resize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
-
-  return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-0 opacity-40" />;
-};
+const ElegantBackground = () => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(99,102,241,0.08)_0%,transparent_50%)]" />
+    <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_80%,rgba(99,102,241,0.05)_0%,transparent_50%)]" />
+    <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(#6378ff 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }} />
+  </div>
+);
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 30 },
   visible: (i = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, delay: i * 0.15, ease: 'easeOut' },
+    transition: { duration: 0.8, delay: i * 0.1, ease: [0.21, 0.45, 0.32, 0.9] },
   }),
 };
 
@@ -123,127 +25,103 @@ const LandingPage = () => {
   const { isAuthenticated } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
 
-  // Cursor motion values
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
-  
-  // Snappy spring for the pointer (Accuracy)
-  const pointerXSpring = useSpring(cursorX, { stiffness: 1000, damping: 40 });
-  const pointerYSpring = useSpring(cursorY, { stiffness: 1000, damping: 40 });
-  
-  // Fluid spring for the spotlight (Aesthetics)
-  const spotlightXSpring = useSpring(cursorX, { stiffness: 150, damping: 30 });
-  const spotlightYSpring = useSpring(cursorY, { stiffness: 150, damping: 30 });
-
   const handleMouseMove = (e) => {
-    cursorX.set(e.clientX);
-    cursorY.set(e.clientY);
-
-    // If hovering the hero content, apply 3D tilt
     const heroContent = document.getElementById('hero-content');
     if (heroContent && heroContent.contains(e.target)) {
       const rect = heroContent.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width - 0.5;
       const y = (e.clientY - rect.top) / rect.height - 0.5;
-      heroContent.style.transform = `rotateY(${x * 12}deg) rotateX(${-y * 12}deg)`;
+      heroContent.style.transform = `rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
     }
   };
 
   const features = [
-    { icon: FiFileText, title: 'Smart Resume Builder', desc: 'Intuitive form with real-time preview. Fill in your details and watch your resume come alive instantly.' },
-    { icon: FiLayout, title: 'Premium Templates', desc: 'Choose from beautifully crafted templates — Classic, Modern, and Minimal — designed for every industry.' },
-    { icon: FiDownload, title: 'PDF Download', desc: 'Download your polished resume as a high-quality PDF file, ready to send to employers.' },
-    { icon: FiZap, title: 'Lightning Fast', desc: 'No bloat, no delays. Build your resume in minutes with our streamlined, responsive interface.' },
-    { icon: FiStar, title: 'Live Preview', desc: 'See changes in real-time with our split-screen editor. What you type is what you get.' },
-    { icon: FiShield, title: 'Secure & Private', desc: 'Your data is protected with industry-standard encryption and never shared with third parties.' },
+    { icon: FiFileText, title: 'Intelligent Builder', desc: 'Craft professional resumes with a clean, distraction-free interface and real-time guidance.', video: 'https://assets.mixkit.co/videos/preview/mixkit-software-developer-working-on-a-code-4441-large.mp4' },
+    { icon: FiLayout, title: 'Artisan Templates', desc: 'Selection of high-end, ATS-optimized templates designed by industry experts for maximum impact.', video: 'https://assets.mixkit.co/videos/preview/mixkit-man-working-on-his-laptop-in-a-coffee-shop-4268-large.mp4' },
+    { icon: FiDownload, title: 'Premium Exports', desc: 'Generate pixel-perfect PDF documents ready for high-stakes applications and printing.', video: 'https://assets.mixkit.co/videos/preview/mixkit-close-up-of-a-person-typing-on-a-laptop-4833-large.mp4' },
+    { icon: FiZap, title: 'Effortless Flow', desc: 'Experience a streamlined workflow that respects your time and focuses on your achievements.', video: 'https://assets.mixkit.co/videos/preview/mixkit-close-up-of-a-blue-eye-1124-large.mp4' },
+    { icon: FiStar, title: 'Modern Aesthetics', desc: 'Elevate your professional image with a resume that reflects modern design standards.', video: 'https://assets.mixkit.co/videos/preview/mixkit-mysterious-pale-blue-smoke-on-a-black-background-4775-large.mp4' },
+    { icon: FiShield, title: 'Privacy First', desc: 'Your professional data is handled with the highest security standards and total privacy.', video: 'https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-a-blue-and-white-circuit-board-4458-large.mp4' },
+    { icon: FiMail, title: 'Direct Forwarding', desc: 'Automatically forward your resume link to any Gmail address for instant professional outreach.', video: 'https://assets.mixkit.co/videos/preview/mixkit-envelope-icon-animation-4330-large.mp4' },
   ];
 
   return (
     <div 
-      className="min-h-screen relative overflow-hidden" 
-      style={{ perspective: 1200 }}
+      className="min-h-screen relative overflow-hidden bg-surface-50 dark:bg-surface-950" 
+      style={{ perspective: 1500 }}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <MirrorFluidBackground />
+      {/* Noise Texture Overlay for Artisanal Feel */}
+      <div className="fixed inset-0 z-[100] pointer-events-none opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150" />
+      
+      <ElegantBackground />
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Animated background shapes */}
-        <div className="absolute inset-0 gradient-dark" />
+      <section className="relative min-h-[95vh] flex items-center justify-center pt-32 sm:pt-20">
         <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl animate-float" />
-          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent-500/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }} />
-          <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/5 rounded-full blur-[120px] animate-float" />
+          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary-600/5 rounded-full blur-[100px] animate-float" style={{ animationDelay: '3s' }} />
         </div>
 
         <motion.div 
           id="hero-content"
           initial="hidden"
           animate="visible"
-          className="relative z-10 max-w-5xl mx-auto px-4 text-center"
-          style={{ transformStyle: 'preserve-3d', transition: 'transform 0.1s ease-out' }}
+          className="relative z-10 max-w-6xl mx-auto px-6 text-center"
+          style={{ transformStyle: 'preserve-3d', transition: 'transform 0.4s cubic-bezier(0.21, 0.45, 0.32, 0.9)' }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'rotateY(0deg) rotateX(0deg)';
-            e.currentTarget.style.transition = 'transform 0.5s ease-out';
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transition = 'none';
           }}
         >
           <motion.div
             variants={fadeUp}
             custom={0}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm text-primary-300 font-medium mb-8"
-            style={{ transform: 'translateZ(50px)' }}
+            className="inline-flex items-center gap-4 px-6 py-2 rounded-full bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 mb-10 shadow-classic"
           >
-            <FiZap className="w-4 h-4" />
-            Build your dream resume in minutes
+            <div className="w-1.5 h-1.5 rounded-full bg-primary-600 shadow-[0_0_10px_rgba(37,99,235,0.5)]" />
+            <span className="text-[10px] uppercase tracking-[0.5em] text-surface-600 dark:text-surface-400 font-black">Professional Artisan Edition</span>
           </motion.div>
 
           <motion.h1
             variants={fadeUp}
             custom={1}
-            className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-tight mb-6"
-            style={{ transform: 'translateZ(100px)' }}
+            className="text-5xl sm:text-8xl lg:text-9xl font-display font-black text-surface-900 dark:text-white leading-[0.95] sm:leading-[0.9] tracking-tighter mb-10"
           >
-            Craft Resumes That
-            <br />
-            <span className="text-gradient">Get You Hired</span>
+            The Art of the <br />
+            <span className="text-primary-600 dark:text-primary-500">Professional Story</span>
           </motion.h1>
 
           <motion.p
             variants={fadeUp}
             custom={2}
-            className="text-lg sm:text-xl text-surface-300 max-w-2xl mx-auto mb-10 leading-relaxed"
-            style={{ transform: 'translateZ(60px)' }}
+            className="text-xl sm:text-2xl text-surface-500 dark:text-surface-400 max-w-3xl mx-auto mb-16 leading-relaxed font-medium"
           >
-            ResumeForge helps you build stunning, ATS-friendly resumes with live preview, 
-            premium templates, and instant PDF download. Stand out from the crowd.
+            Craft an authoritative career narrative with our artisan-designed templates. 
+            Engineered for high-stakes leadership and world-class roles.
           </motion.p>
 
           <motion.div
             variants={fadeUp}
             custom={3}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
-            style={{ transform: 'translateZ(80px)' }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-6"
           >
             <Link to={isAuthenticated ? '/dashboard' : '/signup'}>
               <motion.button
-                whileHover={{ scale: 1.05, translateZ: 20 }}
-                whileTap={{ scale: 0.95 }}
-                className="group px-8 py-4 rounded-xl gradient-primary text-white font-bold text-lg shadow-glow hover:shadow-glow-lg transition-shadow flex items-center gap-2"
+                whileHover={{ scale: 1.02, y: -4 }}
+                whileTap={{ scale: 0.98 }}
+                className="group px-10 py-4 rounded-2xl bg-primary-600 text-white font-bold text-lg shadow-classic hover:bg-primary-500 transition-all flex items-center gap-2"
               >
-                Get Started Free
+                Start Building Free
                 <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </motion.button>
             </Link>
             <Link to="/templates">
               <motion.button
-                whileHover={{ scale: 1.05, translateZ: 20 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 rounded-xl glass text-white font-semibold text-lg hover:bg-white/10 transition-colors"
+                whileHover={{ scale: 1.02, y: -4 }}
+                whileTap={{ scale: 0.98 }}
+                className="px-10 py-4 rounded-2xl bg-white dark:bg-surface-800 text-surface-900 dark:text-white font-bold text-lg shadow-sm border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700 transition-all"
               >
                 View Templates
               </motion.button>
@@ -254,68 +132,88 @@ const LandingPage = () => {
           <motion.div
             variants={fadeUp}
             custom={4}
-            className="mt-16 grid grid-cols-3 gap-8 max-w-md mx-auto"
+            className="mt-20 grid grid-cols-3 gap-4 sm:gap-12 max-w-2xl mx-auto"
             style={{ transform: 'translateZ(40px)' }}
           >
             {[
-              { value: '10K+', label: 'Resumes Built' },
+              { value: '15K+', label: 'Resumes Built' },
               { value: '4', label: 'Pro Templates' },
-              { value: '100%', label: 'Free to Use' },
+              { value: '100%', label: 'Free Access' },
             ].map((stat, i) => (
-              <div key={i} className="text-center">
-                <p className="text-2xl sm:text-3xl font-bold text-gradient">{stat.value}</p>
-                <p className="text-xs sm:text-sm text-surface-400 mt-1">{stat.label}</p>
+              <div key={i} className="text-center group">
+                <p className="text-3xl sm:text-4xl font-display font-black text-primary-600 dark:text-primary-500 mb-1">{stat.value}</p>
+                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-surface-400 dark:text-surface-500 group-hover:text-surface-600 transition-colors">{stat.label}</p>
               </div>
             ))}
           </motion.div>
         </motion.div>
 
-        {/* Scroll indicator */}
+        {/* Scroll indicator - Hidden on most screens to prevent RWD overlap */}
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden 2xl:flex flex-col items-center gap-3"
         >
-          <div className="w-6 h-10 rounded-full border-2 border-surface-500 flex items-start justify-center pt-2">
-            <div className="w-1.5 h-3 rounded-full bg-primary-400" />
+          <span className="text-[10px] uppercase tracking-[0.3em] text-surface-400 dark:text-surface-600 font-bold">Scroll</span>
+          <div className="w-6 h-10 rounded-full border-2 border-surface-200 dark:border-surface-800 flex items-start justify-center pt-2">
+            <motion.div 
+              animate={{ height: [8, 16, 8], opacity: [1, 0.5, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-1 rounded-full bg-primary-500" 
+            />
           </div>
         </motion.div>
       </section>
 
       {/* Features Section */}
-      <section className="py-24 bg-white dark:bg-surface-900 relative z-20">
+      <section className="py-32 bg-white dark:bg-surface-900 relative z-20">
         <div className="max-w-6xl mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-surface-900 dark:text-white mb-4">
-              Everything You Need to <span className="text-gradient">Succeed</span>
+            <h2 className="text-4xl sm:text-5xl font-display font-bold text-surface-900 dark:text-white mb-6">
+              Precision Crafted <span className="text-primary-600">Features</span>
             </h2>
-            <p className="text-surface-500 dark:text-surface-400 text-lg max-w-2xl mx-auto">
-              Powerful features designed to help you create the perfect resume quickly and easily.
+            <p className="text-surface-500 dark:text-surface-400 text-xl max-w-2xl mx-auto font-medium">
+              Everything you need to showcase your professional excellence in a way that resonates with employers.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                className="p-7 rounded-2xl bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:shadow-xl dark:hover:shadow-2xl transition-all duration-300 group cursor-pointer"
+                transition={{ duration: 0.6, delay: i * 0.1 }}
+                whileHover={{ y: -10 }}
+                className="relative p-8 rounded-3xl bg-surface-50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700 hover:shadow-classic hover:bg-white dark:hover:bg-surface-800 transition-all duration-500 group cursor-pointer overflow-hidden"
               >
-                <div className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-500/10 flex items-center justify-center mb-5 group-hover:shadow-glow transition-shadow">
-                  <feature.icon className="w-6 h-6 text-primary-500" />
+                {/* Hover Video */}
+                <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                  <video
+                    src={feature.video}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-1000"
+                  />
+                  <div className="absolute inset-0 bg-white/80 dark:bg-surface-900/80 backdrop-blur-[2px]" />
                 </div>
-                <h3 className="text-lg font-bold text-surface-800 dark:text-white mb-2">{feature.title}</h3>
-                <p className="text-sm text-surface-500 dark:text-surface-400 leading-relaxed">{feature.desc}</p>
+
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-2xl bg-primary-50 dark:bg-primary-900/20 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary-600 transition-all duration-500">
+                    <feature.icon className="w-7 h-7 text-primary-600 group-hover:text-white transition-colors duration-500" />
+                  </div>
+                  <h3 className="text-xl font-bold text-surface-900 dark:text-white mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-500">{feature.title}</h3>
+                  <p className="text-surface-500 dark:text-surface-400 leading-relaxed font-medium group-hover:text-surface-700 dark:group-hover:text-surface-200 transition-colors duration-500">{feature.desc}</p>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -323,47 +221,54 @@ const LandingPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 relative overflow-hidden z-20">
-        <div className="absolute inset-0 gradient-dark" />
+      <section className="py-32 relative overflow-hidden z-20">
+        <div className="absolute inset-0 bg-surface-900 dark:bg-surface-950" />
         <div className="absolute inset-0">
-          <div className="absolute top-1/2 left-1/4 w-72 h-72 bg-primary-500/15 rounded-full blur-3xl" />
-          <div className="absolute top-1/2 right-1/4 w-72 h-72 bg-accent-500/10 rounded-full blur-3xl" />
+          <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-primary-600/10 rounded-full blur-[120px]" />
+          <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-[120px]" />
         </div>
-        <div className="relative z-10 max-w-3xl mx-auto px-4 text-center">
+        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl sm:text-4xl font-bold text-white mb-6"
+            className="text-4xl sm:text-6xl font-display font-bold text-white mb-8"
           >
-            Ready to Build Your Resume?
+            Ready to Redefine Your <br />
+            <span className="text-primary-500">Professional Identity?</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-surface-300 text-lg mb-10"
+            className="text-surface-400 text-xl mb-12 font-medium max-w-2xl mx-auto"
           >
-            Join thousands of professionals who landed their dream jobs with ResumeForge.
+            Join a community of elite professionals who use ResumeForge to navigate their career paths with confidence.
           </motion.p>
           <Link to={isAuthenticated ? '/dashboard' : '/signup'}>
             <motion.button
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, y: -4 }}
               whileTap={{ scale: 0.95 }}
-              className="px-10 py-4 rounded-xl gradient-primary text-white font-bold text-lg shadow-glow hover:shadow-glow-lg transition-shadow"
+              className="px-12 py-5 rounded-2xl bg-primary-600 text-white font-bold text-xl shadow-classic hover:bg-primary-500 transition-all"
             >
-              Start Building Now — It's Free
+              Start Building Your Future
             </motion.button>
           </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 bg-surface-50 dark:bg-surface-950 border-t border-surface-200 dark:border-surface-800 relative z-20">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <p className="text-sm text-surface-500 dark:text-surface-500">
-            © {new Date().getFullYear()} ResumeForge. Built with ❤️ for job seekers everywhere.
+      <footer className="py-12 bg-white dark:bg-surface-950 border-t border-surface-200 dark:border-surface-800 relative z-20">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center">
+              <span className="text-white font-bold text-sm">R</span>
+            </div>
+            <span className="font-display font-bold text-surface-900 dark:text-white">ResumeForge</span>
+          </div>
+          <p className="text-sm text-surface-500 dark:text-surface-500 font-medium">
+            © {new Date().getFullYear()} ResumeForge. All rights reserved. Professionalism redefined.
           </p>
         </div>
       </footer>

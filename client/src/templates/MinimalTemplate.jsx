@@ -30,20 +30,27 @@ const MinimalTemplate = ({ data }) => {
   return (
     <div style={globalStyle}>
       {/* Header */}
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: `${fontSize + 19}px`, fontWeight: '300', color: '#111827', margin: '0 0 4px 0', letterSpacing: '-0.5px' }}>
-          {personalInfo.fullName || 'Your Full Name'}
-        </h1>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', fontSize: `${fontSize - 1}px`, color: '#6b7280', marginTop: '8px' }}>
-          {personalInfo.email && <span>{personalInfo.email}</span>}
-          {personalInfo.phone && <span>{personalInfo.phone}</span>}
-          {personalInfo.address && <span>{personalInfo.address}</span>}
+      <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{ flex: 1 }}>
+          <h1 style={{ fontSize: `${fontSize + 19}px`, fontWeight: '300', color: '#111827', margin: '0 0 4px 0', letterSpacing: '-0.5px' }}>
+            {personalInfo.fullName || 'Your Full Name'}
+          </h1>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', fontSize: `${fontSize - 1}px`, color: '#6b7280', marginTop: '8px' }}>
+            {personalInfo.email && <span>{personalInfo.email}</span>}
+            {personalInfo.phone && <span>{personalInfo.phone}</span>}
+            {personalInfo.address && <span>{personalInfo.address}</span>}
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', fontSize: `${fontSize - 1}px`, color: '#9ca3af', marginTop: '4px' }}>
+            {personalInfo.linkedin && <span>{personalInfo.linkedin}</span>}
+            {personalInfo.github && <span>{personalInfo.github}</span>}
+            {personalInfo.website && <span>{personalInfo.website}</span>}
+          </div>
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', fontSize: `${fontSize - 1}px`, color: '#9ca3af', marginTop: '4px' }}>
-          {personalInfo.linkedin && <span>{personalInfo.linkedin}</span>}
-          {personalInfo.github && <span>{personalInfo.github}</span>}
-          {personalInfo.website && <span>{personalInfo.website}</span>}
-        </div>
+        {personalInfo.photo && (
+          <div style={{ marginLeft: '24px' }}>
+            <img src={personalInfo.photo} alt="Profile" style={{ width: '64px', height: '64px', borderRadius: '12px', objectFit: 'cover', border: '1px solid #e5e7eb' }} />
+          </div>
+        )}
       </div>
 
       {/* Summary */}

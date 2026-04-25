@@ -4,7 +4,7 @@ import {
   FiUser, FiMail, FiPhone, FiMapPin, FiLinkedin, FiGithub, FiGlobe,
   FiBriefcase, FiBook, FiStar, FiFolder, FiAward, FiPlus, FiTrash2,
   FiFileText, FiHeart, FiType, FiGlobe as FiLanguages,
-  FiSettings, FiMaximize, FiType as FiFont, FiArrowRight, FiArrowLeft, FiCheck
+  FiSettings, FiMaximize, FiType as FiFont, FiArrowRight, FiArrowLeft, FiCheck, FiCamera, FiX
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import Button from './ui/Button';
@@ -75,6 +75,27 @@ const ResumeForm = ({ formData, setFormData }) => {
       ...prev,
       personalInfo: { ...prev.personalInfo, [field]: value },
     }));
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error('Image size must be less than 2MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        updatePersonalInfo('photo', reader.result);
+        toast.success('Photo uploaded!');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removePhoto = () => {
+    updatePersonalInfo('photo', '');
+    toast.success('Photo removed');
   };
 
   const addItem = (section, template) => {
@@ -242,6 +263,33 @@ const ResumeForm = ({ formData, setFormData }) => {
             {STEPS[step].id === 'basics' && (
               <div className="space-y-6">
                 <SectionHeader icon={FiUser} title="Personal Information" subtitle="Let employers know who you are and how to reach you." />
+                
+                {/* Profile Photo Upload */}
+                <div className="flex flex-col sm:flex-row items-center gap-6 p-6 bg-white dark:bg-surface-800 rounded-2xl border-2 border-surface-100 dark:border-surface-700 mb-8">
+                  <div className="relative group">
+                    <div className="w-24 h-24 rounded-full overflow-hidden bg-surface-100 dark:bg-surface-900 border-4 border-surface-200 dark:border-surface-700 shadow-inner flex items-center justify-center">
+                      {formData.personalInfo?.photo ? (
+                        <img src={formData.personalInfo.photo} alt="Profile" className="w-full h-full object-cover" />
+                      ) : (
+                        <FiUser className="w-10 h-10 text-surface-300" />
+                      )}
+                    </div>
+                    <label className="absolute bottom-0 right-0 p-2 rounded-full bg-primary-600 text-white cursor-pointer shadow-lg hover:bg-primary-500 transition-all">
+                      <FiCamera className="w-4 h-4" />
+                      <input type="file" className="hidden" accept="image/*" onChange={handlePhotoChange} />
+                    </label>
+                  </div>
+                  <div className="text-center sm:text-left flex-1">
+                    <h4 className="text-sm font-black text-surface-900 dark:text-white uppercase tracking-tight mb-1">Profile Photo</h4>
+                    <p className="text-xs text-surface-500 mb-4 font-medium">Recommended: Square image, max 2MB.</p>
+                    {formData.personalInfo?.photo && (
+                      <button onClick={removePhoto} className="text-xs font-bold text-red-500 hover:text-red-600 flex items-center gap-1 mx-auto sm:mx-0">
+                        <FiX className="w-3.5 h-3.5" /> Remove Photo
+                      </button>
+                    )}
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input label="Full Name" value={formData.personalInfo?.fullName || ''} onChange={(e) => updatePersonalInfo('fullName', e.target.value)} placeholder="John Doe" required />
                   <Input label="Email Address" value={formData.personalInfo?.email || ''} onChange={(e) => updatePersonalInfo('email', e.target.value)} placeholder="john@example.com" type="email" required />

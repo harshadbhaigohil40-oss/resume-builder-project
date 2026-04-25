@@ -38,9 +38,9 @@ const ClassicTemplate = ({ data }) => {
           {personalInfo.fullName || 'Your Full Name'}
         </h1>
         <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px', fontSize: `${fontSize - 1}px`, color: '#555' }}>
-          {personalInfo.email && <span>📧 {personalInfo.email}</span>}
-          {personalInfo.phone && <span>📞 {personalInfo.phone}</span>}
-          {personalInfo.address && <span>📍 {personalInfo.address}</span>}
+          {personalInfo.email && <span><span style={{ color: 'var(--resume-color)' }}>📧</span> {personalInfo.email}</span>}
+          {personalInfo.phone && <span><span style={{ color: 'var(--resume-color)' }}>📞</span> {personalInfo.phone}</span>}
+          {personalInfo.address && <span><span style={{ color: 'var(--resume-color)' }}>📍</span> {personalInfo.address}</span>}
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px', fontSize: `${fontSize - 1}px`, color: '#666', marginTop: '6px' }}>
           {personalInfo.linkedin && <span>LinkedIn: {personalInfo.linkedin}</span>}
@@ -198,7 +198,7 @@ const ClassicTemplate = ({ data }) => {
 
 const Section = ({ title, children, fontSize }) => (
   <div style={{ marginBottom: '20px' }}>
-    <h2 style={{ fontSize: `${fontSize + 3}px`, fontWeight: '700', color: 'var(--resume-color, #2c3e50)', textTransform: 'uppercase', letterSpacing: '1.5px', borderBottom: '1px solid #bdc3c7', paddingBottom: '6px', marginBottom: '12px' }}>
+    <h2 style={{ fontSize: `${fontSize + 3}px`, fontWeight: '700', color: 'var(--resume-color, #2c3e50)', textTransform: 'uppercase', letterSpacing: '1.5px', borderBottom: '2px solid var(--resume-color, #bdc3c7)', paddingBottom: '6px', marginBottom: '12px', opacity: 0.9 }}>
       {title}
     </h2>
     {children}

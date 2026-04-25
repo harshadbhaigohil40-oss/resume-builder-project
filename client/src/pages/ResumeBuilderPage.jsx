@@ -104,28 +104,48 @@ const ResumeBuilderPage = () => {
         navigate(`/builder/${data.resume._id}`, { replace: true });
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to save');
+      const errorData = err.response?.data;
+      if (errorData?.errors && Array.isArray(errorData.errors)) {
+        errorData.errors.forEach(msg => toast.error(msg));
+      } else {
+        toast.error(errorData?.message || 'Failed to save');
+      }
     } finally { setSaving(false); }
   };
 
   const handleDownloadPDF = async () => {
     const element = document.getElementById('resume-preview');
     if (!element) return toast.error('Nothing to download');
-    toast.loading('Generating PDF...');
+    
+    toast.loading('Generating high-quality PDF...');
+    
     try {
+      // Ensure images are loaded and layout is stable
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       const html2pdf = (await import('html2pdf.js')).default;
-      await html2pdf().set({
+      const opt = {
         margin: 0,
         filename: `${formData.title || 'resume'}.pdf`,
-        image: { type: 'jpeg', quality: 1.0 },
-        html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-      }).from(element).save();
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+          scale: 3, 
+          useCORS: true, 
+          letterRendering: true,
+          logging: false,
+          allowTaint: true,
+          backgroundColor: '#ffffff'
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      await html2pdf().set(opt).from(element).save();
       toast.dismiss();
       toast.success('PDF downloaded!');
     } catch (err) {
       toast.dismiss();
       toast.error('PDF generation failed');
+      console.error(err);
     }
   };
 
@@ -194,6 +214,8 @@ const ResumeBuilderPage = () => {
     }
   };
 
+  const [activeTab, setActiveTab] = useState('edit'); // 'edit' or 'preview'
+
   const templates = [
     { id: 'animated', name: '3D Animated 🚀', isPremium: true },
     { id: 'classic', name: 'Classic' },
@@ -207,65 +229,91 @@ const ResumeBuilderPage = () => {
   }
 
   return (
-    <div className="min-h-screen pt-16 bg-surface-50 dark:bg-surface-900">
+    <div className="min-h-screen pt-16 bg-surface-50 dark:bg-surface-950 flex flex-col">
       <Toaster position="top-right" />
+      
       {/* Toolbar */}
-      <div className="sticky top-16 z-40 bg-white/80 dark:bg-surface-800/80 backdrop-blur-xl border-b border-surface-200 dark:border-surface-700 overflow-x-auto custom-scrollbar">
-        <div className="max-w-[1600px] mx-auto px-4 py-3 flex items-center justify-between gap-4 min-w-max lg:min-w-0">
+      <div className="sticky top-16 z-40 bg-white/80 dark:bg-surface-900/80 backdrop-blur-xl border-b border-surface-200 dark:border-surface-800 overflow-x-auto custom-scrollbar">
+        <div className="max-w-[1600px] mx-auto px-4 py-3 flex items-center justify-between gap-6 min-w-max lg:min-w-0">
           <div className="flex items-center gap-3">
             <input
               type="text"
               value={formData.title}
               onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-              className="text-lg font-bold bg-transparent border-none outline-none text-surface-800 dark:text-white placeholder:text-surface-400 w-48 sm:w-64"
+              className="text-lg font-display font-black bg-transparent border-none outline-none text-surface-900 dark:text-white placeholder:text-surface-400 w-48 sm:w-64 focus:ring-0"
               placeholder="Resume Title"
             />
             {saved && (
-              <motion.span initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-1 text-xs text-emerald-500 font-medium">
-                <FiCheck className="w-3.5 h-3.5" /> Saved
+              <motion.span initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="flex items-center gap-1 text-[10px] uppercase tracking-widest text-emerald-500 font-black bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                <FiCheck className="w-3 h-3" /> Saved
               </motion.span>
             )}
           </div>
+          
           <div className="flex items-center gap-2">
-            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => document.getElementById('template-modal').showModal()} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-surface-200 dark:bg-surface-700 hover:bg-surface-300 dark:hover:bg-surface-600 text-surface-800 dark:text-white text-sm font-medium transition-colors whitespace-nowrap">
-              <FiLayout className="w-4 h-4" /> Templates
+            <div className="flex items-center gap-1 p-1 bg-surface-100 dark:bg-surface-800 rounded-xl lg:hidden mr-2 relative">
+              <div 
+                className="absolute h-8 bg-white dark:bg-surface-700 rounded-lg shadow-sm transition-all duration-300 ease-out"
+                style={{ 
+                  width: 'calc(50% - 4px)', 
+                  left: activeTab === 'edit' ? '4px' : 'calc(50%)',
+                }}
+              />
+              <button 
+                onClick={() => setActiveTab('edit')}
+                className={`relative z-10 px-5 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest transition-colors duration-300 ${activeTab === 'edit' ? 'text-primary-600' : 'text-surface-500 hover:text-surface-700'}`}
+              >
+                Edit
+              </button>
+              <button 
+                onClick={() => setActiveTab('preview')}
+                className={`relative z-10 px-5 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest transition-colors duration-300 ${activeTab === 'preview' ? 'text-primary-600' : 'text-surface-500 hover:text-surface-700'}`}
+              >
+                Preview
+              </button>
+            </div>
+
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => document.getElementById('template-modal').showModal()} className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-bold transition-all shadow-sm">
+              <FiLayout className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Templates</span>
             </motion.button>
-            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => document.getElementById('color-modal').showModal()} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-surface-200 dark:bg-surface-700 hover:bg-surface-300 dark:hover:bg-surface-600 text-surface-800 dark:text-white text-sm font-medium transition-colors whitespace-nowrap">
-              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: 'var(--resume-color, #3b82f6)' }} /> Colors
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => document.getElementById('color-modal').showModal()} className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-bold transition-all shadow-sm">
+              <div className="w-3.5 h-3.5 rounded-full border border-black/5 dark:border-white/10" style={{ backgroundColor: 'var(--resume-color, #3b82f6)' }} /> <span className="hidden sm:inline">Colors</span>
             </motion.button>
-            <div className="h-6 w-[1px] bg-surface-200 dark:bg-surface-700 mx-1 hidden sm:block" />
-            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleExportJSON} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-surface-200 dark:bg-surface-700 hover:bg-surface-300 dark:hover:bg-surface-600 text-surface-800 dark:text-white text-sm font-medium transition-colors" title="Export as JSON">
-              <FiShare className="w-4 h-4" /> <span className="hidden sm:inline">Export</span>
+            <div className="h-6 w-[1px] bg-surface-200 dark:bg-surface-700 mx-1 hidden lg:block" />
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleSave} disabled={saving} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary-600 text-white text-xs font-bold shadow-classic hover:bg-primary-500 transition-all disabled:opacity-60">
+              <FiSave className="w-3.5 h-3.5" /> {saving ? 'Saving...' : 'Save'}
             </motion.button>
-            <label className="cursor-pointer">
-              <input type="file" accept=".json" onChange={handleImportJSON} className="hidden" />
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-surface-200 dark:bg-surface-700 hover:bg-surface-300 dark:hover:bg-surface-600 text-surface-800 dark:text-white text-sm font-medium transition-colors">
-                <FiUpload className="w-4 h-4" /> <span className="hidden sm:inline">Import</span>
-              </motion.div>
-            </label>
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleDownloadPDF} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold shadow-sm hover:bg-emerald-500 transition-all">
+              <FiDownload className="w-3.5 h-3.5" /> PDF
+            </motion.button>
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleShareLink} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold shadow-classic hover:bg-indigo-500 transition-all">
+              <FiShare className="w-3.5 h-3.5" /> Share
+            </motion.button>
             <div className="h-6 w-[1px] bg-surface-200 dark:bg-surface-700 mx-1" />
-            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleShareLink} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-medium transition-colors whitespace-nowrap">
-              <FiShare className="w-4 h-4" /> <span className="hidden sm:inline">Share</span>
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleExportJSON} className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-bold transition-all shadow-sm" title="Export JSON">
+              <FiDownload className="w-3.5 h-3.5" /> <span className="hidden xl:inline">Export</span>
             </motion.button>
-            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleSave} disabled={saving} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium transition-colors disabled:opacity-60">
-              <FiSave className="w-4 h-4" /> <span className="hidden sm:inline">{saving ? 'Saving...' : 'Save'}</span>
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => document.getElementById('import-json').click()} className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-bold transition-all shadow-sm" title="Import JSON">
+              <FiUpload className="w-3.5 h-3.5" /> <span className="hidden xl:inline">Import</span>
             </motion.button>
-            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleDownloadPDF} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition-colors">
-              <FiDownload className="w-4 h-4" /> <span className="hidden sm:inline">PDF</span>
-            </motion.button>
+            <input type="file" id="import-json" className="hidden" accept=".json" onChange={handleImportJSON} />
           </div>
         </div>
       </div>
 
-      {/* Split Screen */}
-      <div className="max-w-[1600px] mx-auto flex flex-col lg:flex-row lg:h-[calc(100vh-128px)] h-auto overflow-hidden">
-        {/* Left: Form */}
-        <div className="w-full lg:w-[45%] h-auto lg:h-full overflow-y-auto p-4 sm:p-6 border-b lg:border-b-0 lg:border-r border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900">
-          <ResumeForm formData={formData} setFormData={setFormData} />
+      {/* Main Content Area */}
+      <div className="flex-1 max-w-[1600px] mx-auto w-full flex flex-col lg:flex-row h-full overflow-hidden bg-white dark:bg-surface-900">
+        {/* Form Column */}
+        <div className={`w-full lg:w-[45%] h-full overflow-y-auto custom-scrollbar border-r border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-900 transition-all duration-300 ${activeTab === 'edit' ? 'block' : 'hidden lg:block'}`}>
+          <div className="p-4 sm:p-8">
+            <ResumeForm formData={formData} setFormData={setFormData} />
+          </div>
         </div>
-        {/* Right: Preview */}
-        <div className="w-full lg:w-[55%] h-auto lg:h-full overflow-y-auto p-4 sm:p-6 bg-surface-100 dark:bg-surface-950">
-          <ResumePreview formData={formData} template={formData.template} />
+        {/* Preview Column */}
+        <div className={`w-full lg:w-[55%] h-full overflow-y-auto custom-scrollbar bg-surface-100/50 dark:bg-surface-950/50 transition-all duration-300 ${activeTab === 'preview' ? 'block' : 'hidden lg:block'}`}>
+          <div className="p-4 sm:p-10 flex flex-col items-center">
+            <ResumePreview formData={formData} template={formData.template} />
+          </div>
         </div>
       </div>
 

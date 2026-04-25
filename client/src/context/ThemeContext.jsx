@@ -14,7 +14,7 @@ export const ThemeProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : true; // Default to dark mode
   });
   const [resumeColor, setResumeColor] = useState(() => {
-    return localStorage.getItem('resumeColor') || '#6C63FF';
+    return localStorage.getItem('resumeColor') || '#6378ff';
   });
 
   useEffect(() => {

@@ -5,6 +5,7 @@ const {
   getResume,
   updateResume,
   deleteResume,
+  forwardResume,
 } = require('../controllers/resumeController');
 const auth = require('../middleware/auth');
 
@@ -16,5 +17,7 @@ router.use(auth);
 router.route('/').post(createResume).get(getResumes);
 
 router.route('/:id').get(getResume).put(updateResume).delete(deleteResume);
+
+router.post('/forward/:id', forwardResume);
 
 module.exports = router;

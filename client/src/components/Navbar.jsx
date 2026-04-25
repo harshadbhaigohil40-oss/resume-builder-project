@@ -31,13 +31,16 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-lg gradient-primary flex items-center justify-center shadow-glow">
-              <span className="text-white font-bold text-lg">R</span>
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center shadow-classic group-hover:bg-primary-500 transition-all duration-300">
+              <span className="text-white font-bold text-xl">R</span>
             </div>
-            <span className="text-xl font-bold text-surface-900 dark:text-white group-hover:text-primary-500 transition-colors">
-              Resume<span className="text-gradient">Forge</span>
-            </span>
+            <div className="flex flex-col">
+              <span className="text-base sm:text-lg font-display font-bold text-surface-900 dark:text-white leading-tight">
+                Resume<span className="text-primary-600 dark:text-primary-400">Forge</span>
+              </span>
+              <span className="hidden sm:block text-[10px] uppercase tracking-[0.2em] text-surface-400 dark:text-surface-500 font-medium">Professional Builder</span>
+            </div>
           </Link>
 
           {/* Desktop Nav */}
@@ -59,7 +62,7 @@ const Navbar = () => {
                       className="w-6 h-6 rounded-md object-cover"
                     />
                   ) : (
-                    <FiUser className="w-4 h-4" style={{ color: 'var(--resume-color, #3b82f6)' }} />
+                    <FiUser className="w-4 h-4 text-primary-500" />
                   )}
                   <span className="text-sm font-medium text-surface-700 dark:text-surface-200">
                     {user?.name}
@@ -82,9 +85,9 @@ const Navbar = () => {
                 </NavLink>
                 <Link to="/signup">
                   <motion.button
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-5 py-2 rounded-lg gradient-primary text-white text-sm font-semibold shadow-glow hover:shadow-glow-lg transition-shadow"
+                    className="px-6 py-2.5 rounded-xl bg-primary-600 text-white text-sm font-bold shadow-classic hover:bg-primary-500 transition-all"
                   >
                     Get Started
                   </motion.button>
@@ -96,7 +99,7 @@ const Navbar = () => {
               whileHover={{ scale: 1.1, rotate: 15 }}
               whileTap={{ scale: 0.9 }}
               onClick={toggleDarkMode}
-              className="ml-2 p-2 rounded-lg bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors"
+              className="ml-2 p-2.5 rounded-xl bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all shadow-sm"
               aria-label="Toggle dark mode"
             >
               {darkMode ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}

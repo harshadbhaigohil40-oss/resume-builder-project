@@ -140,8 +140,8 @@ const AnimatedTemplate = ({ data = {} }) => {
                <motion.h1 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                style={{ fontSize: `${fontSize + 24}px` }}
-                className="font-black uppercase tracking-[0.2em] mb-1 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-cyan-400 to-indigo-400 animate-gradient print:text-black print:bg-none"
+                style={{ fontSize: `${fontSize + 24}px`, color: 'var(--resume-color, #818cf8)' }}
+                className="font-black uppercase tracking-[0.2em] mb-1 bg-clip-text md:text-transparent bg-gradient-to-r from-indigo-400 via-cyan-400 to-indigo-400 animate-gradient print:!text-black print:!bg-none"
               >
                 {personalInfo?.fullName || 'YOUR NAME'}
               </motion.h1>

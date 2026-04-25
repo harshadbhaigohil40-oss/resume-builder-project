@@ -1,12 +1,16 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const VIPIntroAnimation = () => {
+const VIPIntroAnimation = ({ onComplete }) => {
+  useEffect(() => {
+    const timer = setTimeout(onComplete, 4500);
+    return () => clearTimeout(timer);
+  }, [onComplete]);
+
   return (
     <motion.div
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.8, ease: "easeInOut" }}
+      exit={{ opacity: 0, transition: { duration: 0.8 } }}
       className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden"
     >
       {/* Animated Gradient Background */}

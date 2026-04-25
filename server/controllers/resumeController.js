@@ -1,4 +1,6 @@
 const Resume = require('../models/Resume');
+const sendEmail = require('../utils/sendEmail');
+const User = require('../models/User');
 
 // @desc    Create new resume
 // @route   POST /api/resumes
@@ -141,3 +143,58 @@ exports.deleteResume = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Forward resume link to email
+// @route   POST /api/resumes/forward/:id
+// @access  Private
+exports.forwardResume = async (req, res, next) => {
+  try {
+    const resume = await Resume.findById(req.params.id);
+
+    if (!resume) {
+      return res.status(404).json({
+        success: false,
+        message: 'Resume not found',
+      });
+    }
+
+    // Ownership check
+    if (resume.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to access this resume',
+      });
+    }
+
+    const user = await User.findById(req.user._id);
+    const emailToForward = req.body.email || user.email;
+
+    const directLink = `${req.protocol}://${req.get('host')}/builder/${resume._id}`;
+    
+    const message = `
+      Hello ${user.name},
+
+      You have requested to forward your resume link.
+      
+      Resume Title: ${resume.title || 'Untitled Resume'}
+      Direct Link: ${directLink}
+
+      Best regards,
+      ResumeForge Automation Team
+    `;
+
+    await sendEmail({
+      email: emailToForward,
+      subject: `Direct Link: ${resume.title || 'Untitled Resume'}`,
+      message,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: `Resume link forwarded to ${emailToForward}`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

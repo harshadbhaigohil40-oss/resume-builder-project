@@ -24,3 +24,9 @@ export const deleteResume = async (id) => {
   const res = await api.delete(`/resumes/${id}`);
   return res.data;
 };
+
+export const forwardResume = async (id, email) => {
+  const res = await api.post(`/resumes/forward/${id}`, { email });
+  return res.data;
+};
+

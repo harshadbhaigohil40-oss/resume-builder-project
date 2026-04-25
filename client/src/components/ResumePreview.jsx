@@ -41,24 +41,22 @@ const ResumePreview = ({ formData, template = 'classic' }) => {
   }, []);
 
   return (
-    <div className="flex flex-col h-full" ref={containerRef}>
-      <div className="flex-1 overflow-auto bg-surface-200/50 dark:bg-surface-950/50 rounded-2xl p-4 sm:p-8 custom-scrollbar flex justify-center">
+    <div className="flex flex-col h-full items-center" ref={containerRef}>
+      <div className="w-full flex-1 overflow-auto bg-surface-200/50 dark:bg-surface-950/50 rounded-2xl p-4 sm:p-8 flex justify-center custom-scrollbar">
         <AnimatePresence mode="wait">
           <motion.div
             key={template}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.4, ease: "circOut" }}
-            className="shadow-2xl overflow-hidden bg-white shrink-0 origin-top"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: scale }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="shadow-2xl bg-white origin-top shrink-0"
             style={{
-              width: '210mm',
-              minHeight: '297mm',
-              transform: `scale(${scale})`,
-              marginBottom: `-${(1 - scale) * 100}%` // Offset the white space created by scale
+              width: '794px', // Standard A4 width in pixels
+              minHeight: '1123px', // Standard A4 height in pixels
             }}
           >
-            <div id="resume-preview" className="w-full h-full">
+            <div id="resume-preview" className="w-full h-full overflow-hidden">
               <TemplateComponent data={formData} />
             </div>
           </motion.div>
