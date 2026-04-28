@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { FiFileText, FiLayout, FiDownload, FiZap, FiArrowRight, FiStar, FiShield, FiMail } from 'react-icons/fi';
+import { FiFileText, FiLayout, FiDownload, FiZap, FiArrowRight, FiStar, FiShield } from 'react-icons/fi';
 
 const ElegantBackground = () => (
   <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -42,7 +42,6 @@ const LandingPage = () => {
     { icon: FiZap, title: 'Effortless Flow', desc: 'Experience a streamlined workflow that respects your time and focuses on your achievements.', video: 'https://assets.mixkit.co/videos/preview/mixkit-close-up-of-a-blue-eye-1124-large.mp4' },
     { icon: FiStar, title: 'Modern Aesthetics', desc: 'Elevate your professional image with a resume that reflects modern design standards.', video: 'https://assets.mixkit.co/videos/preview/mixkit-mysterious-pale-blue-smoke-on-a-black-background-4775-large.mp4' },
     { icon: FiShield, title: 'Privacy First', desc: 'Your professional data is handled with the highest security standards and total privacy.', video: 'https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-a-blue-and-white-circuit-board-4458-large.mp4' },
-    { icon: FiMail, title: 'Direct Forwarding', desc: 'Automatically forward your resume link to any Gmail address for instant professional outreach.', video: 'https://assets.mixkit.co/videos/preview/mixkit-envelope-icon-animation-4330-large.mp4' },
   ];
 
   return (

@@ -1,6 +1,6 @@
 const express = require('express');
 const { body } = require('express-validator');
-const { signup, login, getMe, forgotPassword, resetPassword, updateProfile } = require('../controllers/authController');
+const { signup, login, getMe, forgotPassword, resetPassword, updateProfile, deleteAccount } = require('../controllers/authController');
 const auth = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
@@ -40,5 +40,8 @@ router.put('/resetpassword/:resettoken', resetPassword);
 
 // PUT /api/auth/profile
 router.put('/profile', auth, upload.single('avatar'), updateProfile);
+
+// DELETE /api/auth/account
+router.delete('/account', auth, deleteAccount);
 
 module.exports = router;

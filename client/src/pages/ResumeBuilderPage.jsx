@@ -10,6 +10,9 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import TemplateCards from '../components/TemplateCards';
 import ThemeColorPicker from '../components/ThemeColorPicker';
+import { analyzeResume as fetchAIAnalysis } from '../services/aiService';
+import AISuggestionsPanel from '../components/AISuggestionsPanel';
+import { FiZap } from 'react-icons/fi';
 
 const defaultFormData = {
   title: 'Untitled Resume',
@@ -56,6 +59,11 @@ const ResumeBuilderPage = () => {
   const [resumeId, setResumeId] = useState(id || null);
   const [saved, setSaved] = useState(false);
   const debounceRef = useRef(null);
+
+  // AI States
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiResults, setAiResults] = useState(null);
+  const [isAiPanelOpen, setIsAiPanelOpen] = useState(false);
 
   // Load existing resume
   useEffect(() => {
@@ -149,16 +157,6 @@ const ResumeBuilderPage = () => {
     }
   };
 
-  const handleExportJSON = () => {
-    const dataStr = JSON.stringify(formData, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-    const exportFileDefaultName = `${formData.title || 'resume'}.json`;
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
-    toast.success('JSON exported!');
-  };
 
   const handleImportJSON = (e) => {
     const file = e.target.files[0];
@@ -212,6 +210,79 @@ const ResumeBuilderPage = () => {
       }
       toast.error('Failed to generate link');
     }
+  };
+
+  const handleAIAnalyze = async () => {
+    setAiLoading(true);
+    try {
+      const response = await fetchAIAnalysis(formData);
+      if (response.success) {
+        setAiResults(response.data);
+        setIsAiPanelOpen(true);
+        if (response.message?.includes('Demo Mode')) {
+          toast('Running in Demo Mode (Add API key for real analysis)', {
+            icon: 'ℹ️',
+            duration: 5000,
+          });
+        } else {
+          toast.success('Analysis complete!');
+        }
+      } else {
+        toast.error(response.message || 'AI Analysis failed');
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'AI Analysis failed. Please try again.');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const applySuggestion = (suggestion, currentData) => {
+    const updatedData = { ...currentData };
+    const { section, improved } = suggestion;
+
+    if (section.toLowerCase() === 'summary') {
+      updatedData.personalInfo = { ...updatedData.personalInfo, summary: improved };
+    } else if (section.toLowerCase() === 'experience' && updatedData.experience?.length > 0) {
+      updatedData.experience = updatedData.experience.map(exp => {
+        if (exp.description === suggestion.original) {
+          return { ...exp, description: improved };
+        }
+        return exp;
+      });
+    } else if (section.toLowerCase() === 'projects' && updatedData.projects?.length > 0) {
+      updatedData.projects = updatedData.projects.map(proj => {
+        if (proj.description === suggestion.original) {
+          return { ...proj, description: improved };
+        }
+        return proj;
+      });
+    } else if (section.toLowerCase() === 'skills') {
+      updatedData.skills = improved.split(',').map(s => s.trim());
+    }
+
+    return updatedData;
+  };
+
+  const handleAcceptSuggestion = (suggestion) => {
+    const updatedData = applySuggestion(suggestion, formData);
+    setFormData(updatedData);
+    setAiResults(prev => ({
+      ...prev,
+      suggestions: prev.suggestions.filter(s => s !== suggestion)
+    }));
+    toast.success('Suggestion applied!');
+  };
+
+  const handleAcceptAllSuggestions = () => {
+    let updatedData = { ...formData };
+    aiResults.suggestions.forEach(suggestion => {
+      updatedData = applySuggestion(suggestion, updatedData);
+    });
+    setFormData(updatedData);
+    setAiResults(null);
+    setIsAiPanelOpen(false);
+    toast.success('All suggestions applied!');
   };
 
   const [activeTab, setActiveTab] = useState('edit'); // 'edit' or 'preview'
@@ -289,10 +360,26 @@ const ResumeBuilderPage = () => {
             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleShareLink} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold shadow-classic hover:bg-indigo-500 transition-all">
               <FiShare className="w-3.5 h-3.5" /> Share
             </motion.button>
-            <div className="h-6 w-[1px] bg-surface-200 dark:bg-surface-700 mx-1" />
-            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleExportJSON} className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-bold transition-all shadow-sm" title="Export JSON">
-              <FiDownload className="w-3.5 h-3.5" /> <span className="hidden xl:inline">Export</span>
+            <motion.button 
+              whileHover={{ scale: 1.02 }} 
+              whileTap={{ scale: 0.98 }} 
+              onClick={handleAIAnalyze} 
+              disabled={aiLoading}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-white text-xs font-bold shadow-classic transition-all disabled:opacity-60 ${aiLoading ? 'bg-surface-400' : 'bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500'}`}
+            >
+              {aiLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Analyzing...</span>
+                </div>
+              ) : (
+                <>
+                  <FiZap className="w-3.5 h-3.5 text-yellow-300" />
+                  <span>AI Optimize</span>
+                </>
+              )}
             </motion.button>
+            <div className="h-6 w-[1px] bg-surface-200 dark:bg-surface-700 mx-1" />
             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => document.getElementById('import-json').click()} className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-bold transition-all shadow-sm" title="Import JSON">
               <FiUpload className="w-3.5 h-3.5" /> <span className="hidden xl:inline">Import</span>
             </motion.button>
@@ -348,6 +435,16 @@ const ResumeBuilderPage = () => {
           </div>
         </div>
       </dialog>
+
+      {/* AI Suggestions Panel */}
+      <AISuggestionsPanel
+        isOpen={isAiPanelOpen}
+        onClose={() => setIsAiPanelOpen(false)}
+        score={aiResults?.score || 0}
+        suggestions={aiResults?.suggestions || []}
+        onAccept={handleAcceptSuggestion}
+        onAcceptAll={handleAcceptAllSuggestions}
+      />
     </div>
   );
 };

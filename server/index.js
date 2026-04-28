@@ -36,6 +36,7 @@ app.use('/api', require('./routes/authRoutes'));
 app.use('/api/resumes', require('./routes/resumeRoutes'));
 app.use('/api/portfolio', require('./routes/portfolioRoutes'));
 app.use('/api/templates', require('./routes/templateRoutes'));
+app.use('/api/ai', require('./routes/aiRoutes'));
 
 // Serve static assets
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

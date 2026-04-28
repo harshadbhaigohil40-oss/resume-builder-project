@@ -1,12 +1,12 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { FiUser, FiMail, FiGithub, FiLinkedin, FiGlobe, FiCamera, FiSave, FiCheckCircle } from 'react-icons/fi';
+import { FiUser, FiMail, FiGithub, FiLinkedin, FiGlobe, FiCamera, FiSave, FiCheckCircle, FiAlertTriangle } from 'react-icons/fi';
 import api from '../services/api';
 import toast, { Toaster } from 'react-hot-toast';
 
 const ProfilePage = () => {
-  const { user, setUser } = useAuth();
+  const { user, setUser, logout } = useAuth();
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(user?.avatar ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${user.avatar}` : null);
   const [formData, setFormData] = useState({
@@ -33,6 +33,21 @@ const ProfilePage = () => {
         setPreview(reader.result);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (window.confirm('Are you absolutely sure? This action is permanent and cannot be undone. All your resumes and portfolios will be permanently removed.')) {
+      setLoading(true);
+      try {
+        await api.delete('/account');
+        toast.success('Account deleted successfully');
+        logout();
+      } catch (err) {
+        toast.error(err.response?.data?.message || 'Failed to delete account');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -185,6 +200,36 @@ const ProfilePage = () => {
                 </motion.button>
               </div>
             </form>
+          </div>
+        </motion.div>
+
+        {/* Danger Zone */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mt-8 bg-white dark:bg-surface-800 rounded-3xl shadow-xl border border-red-100 dark:border-red-900/30 overflow-hidden"
+        >
+          <div className="p-8">
+            <div className="flex items-center gap-3 text-red-600 dark:text-red-500 mb-4">
+              <FiAlertTriangle className="w-6 h-6" />
+              <h2 className="text-xl font-bold">Danger Zone</h2>
+            </div>
+            <p className="text-surface-600 dark:text-surface-400 mb-6">
+              Once you delete your account, there is no going back. All your resumes, portfolios, and professional data will be permanently removed.
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              disabled={loading}
+              onClick={handleDeleteAccount}
+              className="px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold transition-all flex items-center gap-2 shadow-lg shadow-red-500/20"
+            >
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : null}
+              Delete My Account
+            </motion.button>
           </div>
         </motion.div>
       </div>

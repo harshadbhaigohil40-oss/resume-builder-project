@@ -2,7 +2,11 @@ const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const crypto = require('crypto');
 const User = require('../models/User');
+const Resume = require('../models/Resume');
+const Portfolio = require('../models/Portfolio');
 const sendEmail = require('../utils/sendEmail');
+const fs = require('fs');
+const path = require('path');
 
 // Generate JWT token
 const generateToken = (userId) => {
@@ -289,6 +293,45 @@ exports.updateProfile = async (req, res, next) => {
         website: user.website,
         isPremium: user.isPremium,
       },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+// @desc    Delete user account and all associated data
+// @route   DELETE /api/auth/account
+// @access  Private
+exports.deleteAccount = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    // 1. Delete associated Resumes
+    await Resume.deleteMany({ userId: user._id });
+
+    // 2. Delete associated Portfolio
+    await Portfolio.deleteOne({ userId: user._id });
+
+    // 3. Delete avatar file if exists
+    if (user.avatar) {
+      const avatarPath = path.join(__dirname, '..', user.avatar);
+      if (fs.existsSync(avatarPath)) {
+        fs.unlinkSync(avatarPath);
+      }
+    }
+
+    // 4. Delete User
+    await user.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      message: 'Account deleted successfully',
     });
   } catch (error) {
     next(error);
