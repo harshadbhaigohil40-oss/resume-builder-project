@@ -66,6 +66,12 @@ const App = () => {
   const [showIntro, setShowIntro] = useState(true);
   const location = useLocation();
 
+  useEffect(() => {
+    // Ping backend to wake up Vercel serverless function (prevent cold start delays on login)
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/health`)
+      .catch((err) => console.log('Pre-warm ping failed', err));
+  }, []);
+
   return (
     <>
       <AnimatePresence mode="wait">
